@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalkulator Algoritma Dasar dan DDA dengan Grafik dan Tabel</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+ 
+    <div class="input-row">
+        <label for="x1">Nilai x1:</label>
+        <input type="number" id="x1" placeholder="">
+        
+        <label for="y1">Nilai y1:</label>
+        <input type="number" id="y1" placeholder="">
+    </div>
+    
+    <div class="input-row">
+        <label for="x2">Nilai x2:</label>
+        <input type="number" id="x2" placeholder="">
+        
+        <label for="y2">Nilai y2:</label>
+        <input type="number" id="y2" placeholder="">
+    </div>
+
+    <div id="buttons">
+        <button onclick="algoritmaDasar()">Algoritma Dasar</button>
+        <button onclick="algoritmaDDA()">Algoritma DDA</button>
+        <button onclick="clearAll()">Clear</button>
+    </div>
+
+    <div class="container">
+        <table id="hasilTable">
+            <thead></thead>
+            <tbody></tbody>
+        </table>
+        <canvas id="canvas" width="500" height="500"></canvas>
+    </div>
+
+    <script src="scripts.js"></script>
+</body>
+</html>
