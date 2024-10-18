@@ -154,6 +154,168 @@ function algoritmaDDA() {
     }
 }
 
+// Fungsi untuk menggambar garis menggunakan Algoritma Bresenham berdasarkan konsep yang diberikan
+function algoritmaBresenham() {
+    const x1 = parseFloat(document.getElementById('x1').value);
+    const y1 = parseFloat(document.getElementById('y1').value);
+    const x2 = parseFloat(document.getElementById('x2').value);
+    const y2 = parseFloat(document.getElementById('y2').value);
+
+    gambarGrid(); // Menggambar grid di canvas
+
+    let x0 = Math.round(x1);
+    let y0 = Math.round(y1);
+    let xn = Math.round(x2);
+    let yn = Math.round(y2);
+
+    let dx = Math.abs(xn - x0);
+    let dy = Math.abs(yn - y0);
+    let sx = (x0 < xn) ? 1 : -1;
+    let sy = (y0 < yn) ? 1 : -1;
+
+    // Inisialisasi nilai parameter p0
+    let p = 2 * dy - dx;
+    let twoDy = 2 * dy;
+    let twoDyMinusDx = 2 * (dy - dx);
+
+    // Menggambar titik awal
+    ctx.fillStyle = 'red';
+    ctx.fillRect(xToCanvas(x0), yToCanvas(y0), 5, 5);
+    ctx.fillRect(xToCanvas(xn), yToCanvas(yn), 5, 5);
+
+    // Menambahkan kolom untuk Algoritma Bresenham ke tabel
+    const tableHead = document.querySelector('#hasilTable thead');
+    tableHead.innerHTML = `
+        <tr>
+            <th>k</th>
+            <th>pk</th>
+            <th>(xk+1</>, yk+1)</th>
+        </tr>
+    `;
+
+    const tableBody = document.querySelector('#hasilTable tbody');
+    tableBody.innerHTML = ''; // Bersihkan tabel sebelum menambahkan baris baru
+
+    // Plot titik-titik garis menggunakan Algoritma Bresenham
+    ctx.fillStyle = 'blue';
+    let k = 0;
+
+    while (x0 !== xn || y0 !== yn) {
+        ctx.fillRect(xToCanvas(x0), yToCanvas(y0), 2, 2); // Plot titik (x0, y0)
+
+        // Menambahkan hasil perhitungan ke tabel
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${k}</td>
+            <td>${p}</td>
+            <td>(${x0}, ${y0})</td>
+        `;
+        tableBody.appendChild(row);
+
+        if (p < 0) {
+            p += twoDy;
+        } else {
+            y0 += sy;
+            p += twoDyMinusDx;
+        }
+        x0 += sx;
+        k++; // Increment k setiap iterasi
+    }
+
+    // Menambahkan titik akhir ke dalam tabel
+    const row = document.createElement('tr');
+    row.innerHTML = `
+        <td>${k}</td>
+        <td>${p}</td>
+        <td>(${xn}, ${yn})</td>
+    `;
+    tableBody.appendChild(row);
+}
+// Fungsi untuk menggambar lingkaran menggunakan Algoritma Bresenham
+function algoritmaBresenhamLingkaran() {
+    const r = parseInt(prompt("Masukkan radius lingkaran:")); // Ambil input radius lingkaran
+    const xCenter = canvas.width / 2 / scale; // Titik pusat di tengah canvas
+    const yCenter = canvas.height / 2 / scale; 
+
+    gambarGrid(); // Menggambar grid pada canvas
+
+    // Inisialisasi nilai awal untuk algoritma Bresenham lingkaran
+    let x = 0;
+    let y = r;
+    let p = 1 - r;
+
+    // Menambahkan kolom untuk Algoritma Bresenham Lingkaran ke tabel
+    const tableHead = document.querySelector('#hasilTable thead');
+    tableHead.innerHTML = `
+        <tr>
+            <th>k</th>
+            <th>p<sub>k</sub></th>
+            <th>xk+1, yk+1</th>
+            <th>2xk+1</th>
+            <th>2yk+1</th>
+        </tr>
+    `;
+
+    const tableBody = document.querySelector('#hasilTable tbody');
+    tableBody.innerHTML = ''; // Bersihkan tabel sebelum menambahkan baris baru
+
+    // Fungsi untuk menggambar semua titik simetri pada lingkaran
+    function drawCirclePoints(xCenter, yCenter, x, y) {
+        ctx.fillStyle = 'blue';
+
+        ctx.fillRect(xToCanvas(xCenter + x), yToCanvas(yCenter + y), 2, 2); // Oktan pertama
+        ctx.fillRect(xToCanvas(xCenter - x), yToCanvas(yCenter + y), 2, 2); // Oktan kedua
+        ctx.fillRect(xToCanvas(xCenter + x), yToCanvas(yCenter - y), 2, 2); // Oktan ketiga
+        ctx.fillRect(xToCanvas(xCenter - x), yToCanvas(yCenter - y), 2, 2); // Oktan keempat
+        ctx.fillRect(xToCanvas(xCenter + y), yToCanvas(yCenter + x), 2, 2); // Oktan kelima
+        ctx.fillRect(xToCanvas(xCenter - y), yToCanvas(yCenter + x), 2, 2); // Oktan keenam
+        ctx.fillRect(xToCanvas(xCenter + y), yToCanvas(yCenter - x), 2, 2); // Oktan ketujuh
+        ctx.fillRect(xToCanvas(xCenter - y), yToCanvas(yCenter - x), 2, 2); // Oktan kedelapan
+    }
+
+    // Gambar titik awal pada lingkaran
+    drawCirclePoints(xCenter, yCenter, x, y);
+
+    // Menambahkan hasil perhitungan awal ke tabel
+    let k = 0;
+    const row = document.createElement('tr');
+    row.innerHTML = `
+        <td>${k}</td>
+        <td>${p}</td>
+        <td>(${x}, ${y})</td>
+        <td>${2 * (x + 1)}</td>
+        <td>${2 * y}</td>
+    `;
+    tableBody.appendChild(row);
+
+    // Loop menggambar lingkaran menggunakan Algoritma Bresenham
+    while (x < y) {
+        k++;
+        x++;
+
+        if (p < 0) {
+            p += 2 * x + 1;
+        } else {
+            y--;
+            p += 2 * (x - y) + 1;
+        }
+
+        // Gambar titik-titik lingkaran di semua oktan
+        drawCirclePoints(xCenter, yCenter, x, y);
+
+        // Tambahkan hasil perhitungan ke tabel
+        const newRow = document.createElement('tr');
+        newRow.innerHTML = `
+            <td>${k}</td>
+            <td>${p}</td>
+            <td>(${x}, ${y})</td>
+            <td>${2 * (x + 1)}</td>
+            <td>${2 * (y)}</td>
+        `;
+        tableBody.appendChild(newRow);
+    }
+}
+
 // Fungsi untuk mengkonversi nilai x ke posisi pada canvas
 function xToCanvas(x) {
     return canvas.width / 2 + x * scale;
