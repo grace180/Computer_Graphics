@@ -72,7 +72,7 @@ function algoritmaDasar() {
 
     // Menggambar titik-titik pada garis berdasarkan persamaan y = mx + b
     ctx.fillStyle = 'blue';
-    const tableBody = document.querySelector('#hasilTable tbody');
+    const tableBody = document.querySelector('#hasilTable tbody');// Bersihkan tabel sebelum menambahkan baris baru
     tableBody.innerHTML = ''; // Bersihkan tabel sebelum menambahkan baris baru
 
     for (let x = xStart; x <= xEnd; x += 0.5) {
@@ -154,7 +154,7 @@ function algoritmaDDA() {
     }
 }
 
-// Fungsi untuk menggambar garis menggunakan Algoritma Bresenham 
+// Fungsi untuk menggambar garis menggunakan Algoritma Bresenham berdasarkan tabel yang di berikan
 function algoritmaBresenham() {
     const x1 = parseFloat(document.getElementById('x1').value);
     const y1 = parseFloat(document.getElementById('y1').value);
