@@ -154,7 +154,7 @@ function algoritmaDDA() {
     }
 }
 
-// Fungsi untuk menggambar garis menggunakan Algoritma Bresenham berdasarkan konsep yang diberikan
+// Fungsi untuk menggambar garis menggunakan Algoritma Bresenham 
 function algoritmaBresenham() {
     const x1 = parseFloat(document.getElementById('x1').value);
     const y1 = parseFloat(document.getElementById('y1').value);
@@ -194,8 +194,7 @@ function algoritmaBresenham() {
     `;
 
     const tableBody = document.querySelector('#hasilTable tbody');
-    tableBody.innerHTML = ''; // Bersihkan tabel sebelum menambahkan baris baru
-
+    tableBody.innerHTML = ''; 
     // Plot titik-titik garis menggunakan Algoritma Bresenham
     ctx.fillStyle = 'blue';
     let k = 0;
@@ -315,7 +314,83 @@ function algoritmaBresenhamLingkaran() {
         tableBody.appendChild(newRow);
     }
 }
+// Fungsi untuk menggambar lingkaran menggunakan Algoritma Flood Fill
+function algoritmaFloodFill() {
+    const x = parseInt(prompt("Masukkan nilai x untuk titik awal:"));
+    const y = parseInt(prompt("Masukkan nilai y untuk titik awal:"));
+    const fillColor = prompt("Masukkan warna untuk mengisi (misalnya 'blue' atau '#00f')");
 
+    gambarGrid(); // Menggambar grid pada canvas
+    floodFill(xToCanvas(x), yToCanvas(y), fillColor);
+}
+
+// Fungsi Flood Fill
+function floodFill(x, y, fillColor) {
+    const targetColor = ctx.getImageData(x, y, 1, 1).data; // Ambil warna awal
+    const targetR = targetColor[0];
+    const targetG = targetColor[1];
+    const targetB = targetColor[2];
+
+    const stack = [[x, y]];
+
+    while (stack.length > 0) {
+        const [currentX, currentY] = stack.pop();
+        
+        // Ambil warna pixel saat ini
+        const currentColor = ctx.getImageData(currentX, currentY, 1, 1).data;
+        if (currentColor[0] === targetR && currentColor[1] === targetG && currentColor[2] === targetB) {
+            ctx.fillStyle = fillColor;
+            ctx.fillRect(currentX, currentY, 1, 1); // Mengisi pixel
+
+            // Menambahkan tetangga ke stack
+            stack.push([currentX + 1, currentY]);
+            stack.push([currentX - 1, currentY]);
+            stack.push([currentX, currentY + 1]);
+            stack.push([currentX, currentY - 1]);
+        }
+    }
+}
+
+// Fungsi untuk menggambar lingkaran menggunakan Algoritma Boundary Fill
+function algoritmaBoundaryFill() {
+    const x = parseInt(prompt("Masukkan nilai x untuk titik awal:"));
+    const y = parseInt(prompt("Masukkan nilai y untuk titik awal:"));
+    const fillColor = prompt("Masukkan warna untuk mengisi (misalnya 'blue' atau '#00f')");
+    const boundaryColor = ctx.getImageData(xToCanvas(x), yToCanvas(y), 1, 1).data; // Ambil warna batas
+
+    gambarGrid(); // Menggambar grid pada canvas
+    boundaryFill(xToCanvas(x), yToCanvas(y), fillColor, boundaryColor);
+}
+
+function boundaryFill(x, y, fillColor, boundaryColor) {
+    const stack = [[x, y]];
+
+    while (stack.length > 0) {
+        const [currentX, currentY] = stack.pop();
+        
+        // Ambil warna pixel saat ini
+        const currentColor = ctx.getImageData(currentX, currentY, 1, 1).data;
+
+        // Memeriksa apakah pixel saat ini bukan warna batas dan bukan warna yang sudah diisi
+        if (currentColor[3] !== 0 && // Pastikan pixel tidak transparan
+            (currentColor[0] !== boundaryColor[0] || 
+             currentColor[1] !== boundaryColor[1] || 
+             currentColor[2] !== boundaryColor[2]) &&
+            (currentColor[0] !== parseInt(fillColor.slice(1, 3), 16) || 
+             currentColor[1] !== parseInt(fillColor.slice(3, 5), 16) || 
+             currentColor[2] !== parseInt(fillColor.slice(5, 7), 16))) {
+                 
+            ctx.fillStyle = fillColor;
+            ctx.fillRect(currentX, currentY, 1, 1); // Mengisi pixel
+
+            // Menambahkan tetangga ke stack
+            stack.push([currentX + 1, currentY]); // East
+            stack.push([currentX - 1, currentY]); // West
+            stack.push([currentX, currentY + 1]); // South
+            stack.push([currentX, currentY - 1]); // North
+        }
+    }
+}
 // Fungsi untuk mengkonversi nilai x ke posisi pada canvas
 function xToCanvas(x) {
     return canvas.width / 2 + x * scale;
